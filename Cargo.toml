@@ -1,0 +1,24 @@
+[package]
+name = "tartan"
+version = "0.1.0"
+license = "MIT OR GPL-3.0-or-later"
+description = "Tartan pattern parser and creator"
+repository = "https://github.com/batisteo/tartan"
+homepage = "https://github.com/batisteo/tartan#readme"
+edition = "2021"
+
+
+[dependencies]
+clap = { version = "3", features = ["derive"], optional = true }
+hex = { version = "0.4" }
+image = { version = "0.23", optional = true }
+imageproc = { version = "0.22", optional = true }
+lazy_static = "1.4.0"
+regex = { version = "1.5.4", features = ["std"], default-features = false }
+
+[features]
+cli = ["clap", "image", "imageproc"]
+
+[[bin]]
+name = "tartan"
+required-features = ["cli"]
