@@ -38,21 +38,16 @@ fn main() {
 
     let mut image: RgbImage = ImageBuffer::new(args.width, args.height);
 
-    // warp
     for y in 0..args.height {
         for (x, colour) in (0..args.width).zip(sett.colours(args.skip)) {
-            image.put_pixel(x, y, Rgb(colour.to_array()));
-        }
-    }
-
-    // weft
-    for x in 0..args.width {
-        for (y, colour) in (0..args.height).zip(sett.colours(args.skip)) {
             if (x + y) / 2 % 2 == 0 {
                 image.put_pixel(x, y, Rgb(colour.to_array()));
+            } else {
+                image.put_pixel(y, x, Rgb(colour.to_array()));
             }
         }
     }
+
     if !args.ugly {
         image = gaussian_noise(&image, 1.5, 4.5, 1);
         image = imageops::blur(&image, 0.7);
