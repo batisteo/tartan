@@ -1,0 +1,13 @@
+[package]
+name = "tartanlib"
+version = "0.2.0"
+license = "MIT OR GPL-3.0-or-later"
+description = "Tartan pattern parser and creator"
+repository = "https://github.com/batisteo/tartan/tree/main/crates/tartanlib"
+homepage = "https://github.com/batisteo/tartan/tree/main/crates/tartanlib#readme"
+edition = "2021"
+
+[dependencies]
+hex = { version = "0.4" }
+lazy_static = "1.4.0"
+regex = { version = "1.5", features = ["std"], default-features = false }
