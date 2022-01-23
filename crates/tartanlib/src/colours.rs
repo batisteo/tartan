@@ -1,5 +1,6 @@
+use crate::tartan_register_shades::SHADES;
 use core::iter::repeat;
-use hex::FromHex;
+use std::collections::HashMap;
 
 #[derive(Debug, PartialEq)]
 pub enum Pivot {
@@ -87,22 +88,21 @@ impl Sett {
     }
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Copy, Clone, Debug, PartialEq)]
 pub struct Shade {
     pub colour: Colour,
     pub tone: Tone,
-    pub hex: String,
     pub rgb: [u8; 3],
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Copy, Clone, Debug, PartialEq)]
 pub enum Tone {
     Light,
     Medium,
     Dark,
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Copy, Clone, Debug, Eq, Hash, PartialEq)]
 pub enum Colour {
     Red,
     Orange,
@@ -129,40 +129,71 @@ impl Colour {
             "RB" => Some(Blue), // Royal Blue
             "P" => Some(Purple),
             "W" => Some(White),
-            "N" => Some(Grey),
+            "N" => Some(Grey), // Neutral
             "K" => Some(Black),
             "Bk" => Some(Black),
-            "T" => Some(Brown),
+            "T" => Some(Brown), // Tan
             _ => None,
         }
     }
 
-    pub fn to_array(&self) -> [u8; 3] {
-        use Colour::*;
-
-        fn rgb(hex: &str) -> [u8; 3] {
-            <[u8; 3]>::from_hex(hex).unwrap()
-        }
-
-        match self {
-            Red => rgb("c80000"),
-            Yellow => rgb("c8c800"),
-            Green => rgb("006818"),
-            Blue => rgb("1c0070"),
-            White => rgb("fcfcfc"),
-            Black => rgb("111111"),
-            Brown => rgb("402000"),
-            _ => rgb("111111"),
+    pub fn to_array(&self, palette: &Palette) -> [u8; 3] {
+        if let Some(shade) = palette.shades.get(&self) {
+            shade.rgb
+        } else {
+            [0, 255, 0]
         }
     }
 }
 
-#[allow(dead_code)]
 #[derive(Debug, PartialEq)]
-pub enum Variation {
+pub enum Colourway {
     Modern,
     Ancient,
+    Reproduction,
+    Weathered, // Withered
+    Muted,
+    Standard,
+}
+impl Default for Colourway {
+    fn default() -> Self {
+        Colourway::Modern
+    }
+}
+
+#[derive(Debug, PartialEq)]
+pub enum Variation {
     Hunting,
     Dress,
-    Weathered, // Withered // Muted
+}
+
+#[derive(Debug)]
+pub struct Palette {
+    pub colourway: Option<Colourway>,
+    pub variation: Option<Variation>,
+    pub shades: HashMap<Colour, Shade>,
+}
+
+impl Default for Palette {
+    fn default() -> Self {
+        use Colour::*;
+
+        let shades = HashMap::from([
+            (Red, SHADES[7]),
+            (Orange, SHADES[20]),
+            (Yellow, SHADES[32]),
+            (Green, SHADES[62]),
+            (Blue, SHADES[89]),
+            (Purple, SHADES[99]),
+            (White, SHADES[106]),
+            (Grey, SHADES[113]),
+            (Black, SHADES[119]),
+            (Brown, SHADES[131]),
+        ]);
+        Palette {
+            colourway: Some(Colourway::default()),
+            variation: None,
+            shades,
+        }
+    }
 }

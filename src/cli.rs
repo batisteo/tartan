@@ -1,5 +1,7 @@
 use clap::Parser;
+use hex::FromHex;
 use regex::Regex;
+use tartanlib::colours::*;
 
 #[derive(Debug)]
 pub struct Parameters {
@@ -9,6 +11,7 @@ pub struct Parameters {
     pub skip: usize,
     pub ugly: bool,
     pub pattern: String,
+    pub palette: Palette,
 }
 
 impl Parameters {
@@ -16,6 +19,32 @@ impl Parameters {
         let args = Args::parse();
         let (width, height) = Self::dimensions(&args.size);
 
+        let mut palette = Palette::default();
+        let colours = vec![
+            (Colour::Red, args.red),
+            (Colour::Orange, args.orange),
+            (Colour::Yellow, args.yellow),
+            (Colour::Green, args.green),
+            (Colour::Blue, args.blue),
+            (Colour::Purple, args.purple),
+            (Colour::White, args.white),
+            (Colour::Grey, args.grey),
+            (Colour::Black, args.black),
+            (Colour::Brown, args.brown),
+        ];
+        for (colour, string) in colours {
+            if let Some(hex) = string {
+                let hex = hex.replace("#", "");
+                palette.shades.insert(
+                    colour,
+                    Shade {
+                        colour,
+                        rgb: <[u8; 3]>::from_hex(hex).unwrap(),
+                        tone: Tone::Medium,
+                    },
+                );
+            }
+        }
         Self {
             filename: args.filename,
             width,
@@ -23,6 +52,7 @@ impl Parameters {
             skip: args.skip,
             ugly: args.ugly,
             pattern: args.pattern,
+            palette,
         }
     }
 
@@ -31,18 +61,16 @@ impl Parameters {
 
         if size.is_empty() {
             (400, 400)
+        } else if let Ok(size) = size.parse::<u32>() {
+            (size, size)
+        } else if let Some(caps) = wxh.captures(size) {
+            (
+                caps["width"].parse::<u32>().unwrap(),
+                caps["height"].parse::<u32>().unwrap(),
+            )
         } else {
-            if let Some(size) = size.parse::<u32>().ok() {
-                (size, size)
-            } else if let Some(caps) = wxh.captures(&size) {
-                (
-                    caps["width"].parse::<u32>().unwrap(),
-                    caps["height"].parse::<u32>().unwrap(),
-                )
-            } else {
-                println!("Couldn’t understand the size, using default 400px");
-                (400, 400)
-            }
+            println!("Couldn’t understand the size, using default 400px");
+            (400, 400)
         }
     }
 }

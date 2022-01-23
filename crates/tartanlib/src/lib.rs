@@ -2,6 +2,7 @@
 extern crate lazy_static;
 
 pub mod colours;
+pub mod tartan_register_shades;
 use colours::{Sett, Span};
 use regex::Regex;
 

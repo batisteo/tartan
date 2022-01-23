@@ -14,7 +14,7 @@ fn main() {
     let mut image: RgbImage = ImageBuffer::new(params.width, params.height);
 
     for (x, y, colour) in sett.coord_colours(params.width, params.height, params.skip) {
-        image.put_pixel(x, y, Rgb(colour.to_array()));
+        image.put_pixel(x, y, Rgb(colour.to_array(&params.palette)));
     }
 
     if !params.ugly {
