@@ -1,6 +1,8 @@
 use crate::tartan_register_shades::SHADES;
+use alloc::collections::BTreeMap;
+use alloc::vec::Vec;
 use core::iter::repeat;
-use std::collections::HashMap;
+use no_std_compat::cmp::Ordering;
 
 #[derive(Debug, PartialEq)]
 pub enum Pivot {
@@ -44,6 +46,12 @@ pub struct Sett {
     pub pattern: Vec<Span>,
     pub symmetric: bool,
     pub weft: Weft,
+}
+
+impl Default for Sett {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl Sett {
@@ -102,7 +110,7 @@ pub enum Tone {
     Dark,
 }
 
-#[derive(Copy, Clone, Debug, Eq, Hash, PartialEq)]
+#[derive(Copy, Clone, Debug, Eq, Hash, PartialEq, PartialOrd)]
 pub enum Colour {
     Red,
     Orange,
@@ -146,6 +154,13 @@ impl Colour {
     }
 }
 
+#[allow(clippy::derive_ord_xor_partial_ord)]
+impl Ord for Colour {
+    fn cmp(&self, other: &Self) -> Ordering {
+        (format!("{:?}", &self)).cmp(&format!("{:?}", &other))
+    }
+}
+
 #[derive(Debug, PartialEq)]
 pub enum Colourway {
     Modern,
@@ -171,14 +186,14 @@ pub enum Variation {
 pub struct Palette {
     pub colourway: Option<Colourway>,
     pub variation: Option<Variation>,
-    pub shades: HashMap<Colour, Shade>,
+    pub shades: BTreeMap<Colour, Shade>,
 }
 
 impl Default for Palette {
     fn default() -> Self {
         use Colour::*;
 
-        let shades = HashMap::from([
+        let shades = BTreeMap::from([
             (Red, SHADES[7]),
             (Orange, SHADES[20]),
             (Yellow, SHADES[32]),

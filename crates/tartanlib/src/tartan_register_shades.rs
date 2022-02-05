@@ -1,4 +1,5 @@
 use crate::colours::{Colour, Shade, Tone};
+use alloc::vec::Vec;
 
 lazy_static! {
     pub static ref SHADES: Vec<Shade> = vec![
