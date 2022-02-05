@@ -1,0 +1,15 @@
+{
+  "name": "breacan",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "devDependencies": {
+    "vite": "^2.7.13",
+    "vite-plugin-wasm-pack": "^0.1.9"
+  },
+  "scripts": {
+    "wasm": "wasm-pack build --target web breacan",
+    "dev": "vite",
+    "build": "vite build"
+  }
+}
