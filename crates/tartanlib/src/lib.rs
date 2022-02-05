@@ -12,7 +12,7 @@ lazy_static! {
 }
 
 fn _parse(input: &str, mut sett: Sett) -> (&str, Sett) {
-    if let Some(caps) = RE.captures(&input) {
+    if let Some(caps) = RE.captures(input) {
         let span = if caps.name("pivot").is_some() {
             Span::pivot
         } else {

@@ -138,7 +138,7 @@ impl Colour {
     }
 
     pub fn to_array(&self, palette: &Palette) -> [u8; 3] {
-        if let Some(shade) = palette.shades.get(&self) {
+        if let Some(shade) = palette.shades.get(self) {
             shade.rgb
         } else {
             [0, 255, 0]
